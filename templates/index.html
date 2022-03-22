@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block title %}Grogu TV{% endblock title %}
+{% block content %}
+{% for post in allPosts  %}
+<div class="row no-gutters border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 my-4 position-relative bg-dark text-light">
+    <div class="col p-4 d-flex flex-column position-static">
+        <strong class="d-inline-block mb-2 text-primary text-center">{{post.author}}</strong>
+        <div class="container rounded mx-auto d-block embed-responsive embed-responsive-16by9 d-flex align-items-center justify-content-center">
+            <a href="/tv/{{post.slug}}"><img src="{{post.img}}" class="rounded img-fluid d-flex mx-auto d-block w-75" class="embed-responsive-item" alt="{{post.title}}"></a>
+        </div>
+        <div class="my-2 d-flex align-items-center justify-content-center">
+            <a href="/tv/{{post.slug}}" role="button" class="btn btn-danger d-flex align-items-center justify-content-center">Watch Now</a>
+        </div>
+        
+    </div>
+</div>
+
+{% endfor %}
+
+{% endblock content %}

@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+{% block title %}{{post.title}} - Grogu TV{% endblock title %}
+{% block content %}
+{% load humanize %}
+{% load extras %}
+<div class="container my-3">
+    <div class="row no-gutters border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-25 my-4 position-relative bg-dark text-light">
+        <div class="embed-responsive embed-responsive-16by9 d-flex align-items-center justify-content-center">
+            <iframe class="embed-responsive-item" width="560" height="315" title="{{post.title}}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" scrolling="no" src="{{post.content}}" allowfullscreen></iframe>
+        </div>
+    </div>
+    <iframe allowfullscreen></iframe>
+    <hr>
+    <div class="accordion-item">
+        <div class="accordion-header" id="flush-headingThree">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseThree" aria-expanded="false" aria-controls="flush-collapseThree">
+            <h2 class="blog-post-title">{{post.title}}</h2>
+          </button>
+        </div>
+        <div id="flush-collapseThree" class="accordion-collapse collapse" aria-labelledby="flush-headingThree" data-bs-parent="#accordionFlushExample">
+            <p class="blog-post-meta text-center mt-2 mb-2">{{post.timeStamp}} | <a href="#">{{post.author}}</a></p>
+            <div class="accordion-body">{{post.desc|safe}}</div>
+        </div>
+      </div>
+</div>
+<div class="container">
+    <div class="accordion-item" id="comments">
+        <h2 class="accordion-header" id="panelsStayOpen-headingOne">
+          <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="true" aria-controls="panelsStayOpen-collapseOne">
+            <h2>💬 | View Comments ({{comments.count}}) :</h2>
+          </button>
+        </h2>
+        <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show" aria-labelledby="panelsStayOpen-headingOne">
+          <div class="accordion-body bg-info">
+            <div class="my-2 bg-info">
+                {% if user.is_authenticated %}
+                <form action="/tv/postComment" method="post" class="row">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Post Comment </label>
+                        <input type="hidden" name="postSno" value="{{post.sno}}">
+                        <input type="text" class="form-control" name="comment" placeholder="Enter comment here" required>
+                        <input type="hidden" name="parentSno" value="">
+                        <button type="submit" class="btn btn-primary col-sm-1 mt-2">Submit</button>
+                    </div>
+                </form>
+                {% else %}
+                <div><hr></div>
+                <p class="mt-2 mb-2">
+                  <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#loginModal">Log in</button>
+                   <b> or </b>
+                  <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#signupModal">Signup</button>
+                   <b> to post comments!</b>
+                </p>
+                {% endif %}
+            </div>
+          </div>
+          <div class="container d-flex align-items-center justify-content-center">
+            <div class="col-md-11 overflow-auto" style="height: 400px;">
+                {% for comment in comments %}
+                <div><hr></div>
+                <div class="container row">
+                   
+                    <div class="container">
+                        <img height="28" class="rounded-circle" src="/static/img/profile.png" alt="user">
+                        <b> {{comment.user.username}} </b> <span class="badge badge-secondary text-dark ">{{comment.timestamp| naturaltime}}</span>
+                        <div>{{comment.comment}}</div>
+                        <div class="reply mx-0">
+                            {% if user.is_authenticated %}
+                            <button class="btn btn-sm btn-primary mt-2" type="button" data-bs-toggle="collapse" data-bs-target="#replyBox{{comment.sno}}" aria-expanded="false" aria-controls="replyBox{{comment.sno}}">
+                                Reply
+                            </button>
+                            <div class="collapse" id="replyBox{{comment.sno}}">
+                                <div class="card card-body my-2">
+                                    <form action="/tv/postComment" method="post">
+                                        {% csrf_token %}
+                                        <div class="form-group">
+                                            <label for="comment">Post a reply </label>
+                                            <input type="text" class="form-control" name="comment" placeholder="Enter comment here" required>
+                                            <input type="hidden" name="parentSno" value="{{comment.sno}}">
+                                        </div>
+                                        <input type="hidden" name="postSno" value="{{post.sno}}">
+                                        <button type="submit" class="btn btn-primary btn-sm mt-1">Submit</button>
+                                    </form>
+                                </div>
+                            </div>
+                            {% else %}
+                            <button type="button" class="btn btn-sm btn-primary mt-1" data-bs-toggle="modal" data-bs-target="#loginModal">Log in to reply!</button>
+                            {% endif %}
+                            <div class="container">
+                            <div class="container">
+                                <div class="replies">
+                                    {% for reply in replyDict|get_val:comment.sno %}
+                                    <div class="row">
+                                        
+                                        <div class="col-sm-12">
+                                            <div class="col-sm-8">
+                                                <img height="24" class="rounded-circle" src="/static/img/profile.png" alt="user">
+                                                <b> {{reply.user.username}}</b> <span class="badge badge-secondary text-dark">{{reply.timestamp| naturaltime}}</span>
+                                                <div>{{reply.comment}}</div>
+                                            </div>
+                                            <br>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                
+            </div>
+        </div>
+
+        </div>
+    </div>
+
+</div>
+<div class="container d-flex align-items-center justify-content-center">
+    <button type="button" class="btn btn-info text-dark mt-3 text-center"><a href="#">Back to Top!</a></button>
+</div>
+{% endblock %}

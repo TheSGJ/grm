@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block title %} Search Results {% endblock title %}
+
+
+{% block content %}
+<div class="container my-3">
+    <h2>Search results : </h2>
+    {% if allPosts|length < 1 %}
+   <p>No search results</p>
+    Your search query : <b>{{query}}</b> did not match any documents. <br>
+    Suggestions:
+    <ul>
+    <li>Make sure that all words are spelled correctly.</li>
+    <li>Try more general keywords.</li>
+   <li> Try fewer keywords.</li>
+   <li> Try different keywords.</li>
+    </li>
+    </ul>
+
+
+    {% endif %}
+    {% for post in allPosts  %}
+    <div class="row no-gutters border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 my-4 position-relative bg-dark text-light">
+        <div class="col p-4 d-flex flex-column position-static">
+            <strong class="d-inline-block mb-2 text-primary text-center">{{post.author}}</strong>
+            <div class="container rounded mx-auto d-block embed-responsive embed-responsive-16by9 d-flex align-items-center justify-content-center">
+                <img src="{{post.img}}" class="rounded img-fluid d-flex mx-auto d-block w-75" class="embed-responsive-item" alt="...">
+            </div>
+            <div class="my-2 d-flex align-items-center justify-content-center">
+            	<a href="/tv/{{post.slug}}" role="button" class="btn btn-danger d-flex align-items-center justify-content-center">Watch Now</a>
+            </div>
+            
+        </div>
+    </div>
+
+    {% endfor %}
+    </div>
+ {% endblock %}
